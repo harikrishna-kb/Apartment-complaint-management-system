@@ -1,0 +1,389 @@
+﻿{
+  "info": {
+    "_postman_id": "a9e612cd-8a2b-4d43-98fe-society-cms-testing",
+    "name": "SocietyCMS Automated Test Suite",
+    "description": "Comprehensive REST API test collection for Society Complaint Management System. Includes authentication, ticket lifecycle, validation, and database baseline resets.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5173",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "createdTicketId",
+      "value": "complaint_baseline_01",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Reset Test Database Baseline",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Reset successful and baseline metrics returned\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.baseline.complaints).to.eql(3);",
+              "    pm.expect(jsonData.baseline.users).to.eql(4);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/test/reset",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test", "reset"]
+        }
+      }
+    },
+    {
+      "name": "02 - Auth Login Resident (Valid Credentials)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Token returned and role is resident\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.token).to.be.a('string');",
+              "    pm.expect(jsonData.user.role).to.eql('resident');",
+              "    pm.expect(jsonData.user.email).to.eql('rohit@society.com');",
+              "    pm.collectionVariables.set(\"authToken\", jsonData.token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"rohit@society.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "03 - Auth Login (Bad Credentials 401)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 401 Unauthorized\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"Error response schema matches\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(false);",
+              "    pm.expect(jsonData.error).to.be.a('string');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"rohit@society.com\",\n  \"password\": \"invalid_pass_999\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "04 - Get Technician Staff List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Returns list of technicians\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data).to.be.an('array');",
+              "    pm.expect(jsonData.data.length).to.be.at.least(2);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/staff",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "staff"]
+        }
+      }
+    },
+    {
+      "name": "05 - Get All Complaints",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Complaints array returned\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data).to.be.an('array');",
+              "    pm.expect(jsonData.data.length).to.be.at.least(1);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/complaints",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "complaints"]
+        }
+      }
+    },
+    {
+      "name": "06 - Filter Complaints by Status and Category",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"All filtered items match status and category query\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    jsonData.data.forEach(function (ticket) {",
+              "        pm.expect(ticket.status.toLowerCase()).to.eql('pending');",
+              "        pm.expect(ticket.category.toLowerCase()).to.eql('plumbing');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/complaints?status=Pending&category=Plumbing",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "complaints"],
+          "query": [
+            { "key": "status", "value": "Pending" },
+            { "key": "category", "value": "Plumbing" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "07 - Create New Complaint (Valid Payload)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Token Number conforms to regex ^TKN-[0-9]{6}$\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data.tokenNumber).to.match(/^TKN-[0-9]{6}$/);",
+              "    pm.expect(jsonData.data.ticketId).to.match(/^CMS-[0-9]{4,}$/);",
+              "    pm.expect(jsonData.data.status).to.eql('Pending');",
+              "    pm.collectionVariables.set(\"createdTicketId\", jsonData.data.id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Kitchen faucet leaking water continuously\",\n  \"description\": \"Water dripping into lower cabinet valve under continuous main pressure.\",\n  \"category\": \"Plumbing\",\n  \"priority\": \"P1 - Critical\",\n  \"flatNo\": \"A-104\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/complaints",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "complaints"]
+        }
+      }
+    },
+    {
+      "name": "08 - Create Complaint (Validation Error 400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"Validation error message present\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(false);",
+              "    pm.expect(jsonData.error).to.include('Validation failed');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"\",\n  \"description\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/complaints",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "complaints"]
+        }
+      }
+    },
+    {
+      "name": "09 - Assign Technician to Complaint",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Status updated to Assigned with allocated technician\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data.status).to.eql('Assigned');",
+              "    pm.expect(jsonData.data.technician_name).to.eql('Ramesh Sharma');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"technicianId\": \"tech_user_001\",\n  \"technicianName\": \"Ramesh Sharma\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/complaints/complaint_baseline_01/assign",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "complaints", "complaint_baseline_01", "assign"]
+        }
+      }
+    },
+    {
+      "name": "10 - Resolve Complaint",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Status updated to Resolved with timestamp\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(true);",
+              "    pm.expect(jsonData.data.status).to.eql('Resolved');",
+              "    pm.expect(jsonData.data.resolvedAt).to.be.a('string');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/complaints/complaint_baseline_01/resolve",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "complaints", "complaint_baseline_01", "resolve"]
+        }
+      }
+    }
+  ]
+}

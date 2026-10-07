@@ -1,0 +1,107 @@
+import { USER_ROLES } from '../constants/roles';
+import { TICKET_STATUS, TICKET_PRIORITY, PRIORITY_SLA } from '../constants/status';
+
+export const INITIAL_SEED_USERS = [
+  {
+    uid: 'admin_user_001',
+    email: 'admin@society.com',
+    password: 'password123',
+    name: 'Society Secretary (Admin)',
+    role: USER_ROLES.ADMIN,
+    flat_no: null,
+  },
+  {
+    uid: 'tech_user_001',
+    email: 'ramesh@tech.com',
+    password: 'password123',
+    name: 'Ramesh Sharma',
+    role: USER_ROLES.TECHNICIAN,
+    flat_no: null,
+    specialty: 'Lead Electrician (High Voltage & Wiring)',
+  },
+  {
+    uid: 'tech_user_002',
+    email: 'suresh@tech.com',
+    password: 'password123',
+    name: 'Suresh Nair',
+    role: USER_ROLES.TECHNICIAN,
+    flat_no: null,
+    specialty: 'Senior Plumber (Pumps, Pipes & Sanitation)',
+  },
+  {
+    uid: 'tech_user_003',
+    email: 'vikram@tech.com',
+    password: 'password123',
+    name: 'Vikram Singh',
+    role: USER_ROLES.TECHNICIAN,
+    flat_no: null,
+    specialty: 'HVAC & Elevator Specialist (Lift Operations)',
+  },
+  {
+    uid: 'tech_user_004',
+    email: 'anil@tech.com',
+    password: 'password123',
+    name: 'Anil Deshmukh',
+    role: USER_ROLES.TECHNICIAN,
+    flat_no: null,
+    specialty: 'Structural & Masonry Expert (Civil Maintenance)',
+  },
+  {
+    uid: 'tech_user_005',
+    email: 'pooja@tech.com',
+    password: 'password123',
+    name: 'Pooja Verma',
+    role: USER_ROLES.TECHNICIAN,
+    flat_no: null,
+    specialty: 'Facility & Security Supervisor (Gate & Cameras)',
+  },
+  {
+    uid: 'tech_user_006',
+    email: 'rafiq@tech.com',
+    password: 'password123',
+    name: 'Mohammed Rafiq',
+    role: USER_ROLES.TECHNICIAN,
+    flat_no: null,
+    specialty: 'Carpentry & Door Hardware Specialist (Smart Locks)',
+  },
+  {
+    uid: 'tech_user_007',
+    email: 'deepak@tech.com',
+    password: 'password123',
+    name: 'Deepak Joshi',
+    role: USER_ROLES.TECHNICIAN,
+    flat_no: null,
+    specialty: 'Water Treatment & Pump Operations Engineer',
+  },
+  {
+    uid: 'res_user_001',
+    email: 'resident1@flat.com',
+    password: 'password123',
+    name: 'Dr. Arvind Sharma',
+    role: USER_ROLES.RESIDENT,
+    flat_no: 'A-101',
+    tower: 'Tower A',
+  },
+  {
+    uid: 'res_user_002',
+    email: 'resident2@flat.com',
+    password: 'password123',
+    name: 'Priya Nair',
+    role: USER_ROLES.RESIDENT,
+    flat_no: 'B-204',
+    tower: 'Tower B',
+  },
+  {
+    uid: 'res_user_rohit',
+    email: 'rohit@society.com',
+    password: 'password123',
+    name: 'Rohit',
+    role: USER_ROLES.RESIDENT,
+    flat_no: 'A-104',
+    tower: 'Tower A',
+  },
+];
+
+export const INITIAL_SEED_COMPLAINTS = [];
+
+
